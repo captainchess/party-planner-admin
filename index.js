@@ -64,10 +64,23 @@ async function addEvent(party) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(party),
     });
-    getParties();
+    await getParties();
   } catch (error) {
     console.error(error);
   }
+}
+
+async function removeEvent(partyId) {
+  console.debug(partyId);
+  try {
+    await fetch(API + `/events/${partyId}`, {
+      method: "DELETE",
+    })
+    selectedParty = undefined;
+    await getParties();
+  } catch (error) {
+    console.error(error);
+  }  
 }
 
 // === Components ===
@@ -115,9 +128,13 @@ function SelectedParty() {
     <address>${selectedParty.location}</address>
     <p>${selectedParty.description}</p>
     <GuestList></GuestList>
+    <button>Delete</button>
   `;
   $party.querySelector("GuestList").replaceWith(GuestList());
 
+  $party.querySelector("button").addEventListener("click", () => {
+    removeEvent(selectedParty.id);
+  })
   return $party;
 }
 
